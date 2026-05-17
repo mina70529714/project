@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Care Bridge Team — Smart Rehabilitation Center</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+/* ═══════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #040b14;
+  --bg2:      #071220;
+  --surface:  #0d1e30;
+  --surface2: #122234;
+  --teal:     #00c4a7;
+  --teal2:    #00e8c6;
+  --blue:     #1a6fff;
+  --gold:     #f5c842;
+  --text:     #e8f0f7;
+  --muted:    #6b8fad;
+  --border:   rgba(0,196,167,.15);
+  --glow:     0 0 40px rgba(0,196,167,.2);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+  transition: background .3s, color .3s;
+}
+
+/* Light mode */
+body.light {
+  --bg:       #f5f8fc;
+  --bg2:      #ffffff;
+  --surface:  #ffffff;
+  --surface2: #f2f6fb;
+  --text:     #071220;
+  --muted:    #5d7288;
+  cursor: none;
+}
+
+/* ═══════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════ */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--teal);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .1s, width .2s, height .2s, background .2s;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(0,196,167,.5);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform .18s ease, width .25s, height .25s;
+}
+.cursor.hovered { width: 20px; height: 20px; background: var(--gold); }
+
+/* ═══════════════════════════════════════
+   NOISE OVERLAY
+═══════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: .4; pointer-events: none; z-index: 1;
+}
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 999;
+  padding: 20px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(20px);
+  background: rgba(4,11,20,.7);
+  border-bottom: 1px solid var(--border);
+  transition: padding .3s, background .3s;
+}
+body.light nav { background: rgba(245,248,252,.85); }
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.4rem;
+  letter-spacing: -.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--teal); }
+
+.nav-links { display: flex; gap: 35px; list-style: none; }
+.nav-links a {
+  font-size: .85rem; font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  letter-spacing: .04em; text-transform: uppercase;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--teal); }
+
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+
+.lang-toggle, .theme-toggle {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.04);
+  color: var(--teal);
+  cursor: pointer;
+  transition: .3s;
+  font-size: .9rem;
+}
+.lang-toggle:hover, .theme-toggle:hover {
+  transform: translateY(-3px);
+  background: rgba(0,196,167,.12);
+}
+
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 140px 40px 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Grid lines */
+.grid-lines {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,196,167,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,196,167,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* Orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(85px); pointer-events: none;
+}
+.orb1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,196,167,.12) 0%, transparent 70%);
+  top: -150px; left: -150px;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.orb2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(26,111,255,.10) 0%, transparent 70%);
+  bottom: -120px; right: -120px;
+  animation: orbFloat 8s ease-in-out infinite;
+  animation-delay: -3s;
+}
+.orb3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(245,200,66,.07) 0%, transparent 70%);
+  top: 40%; left: 50%; transform: translateX(-50%);
+  animation: orbFloat 8s ease-in-out infinite;
+  animation-delay: -6s;
+}
+@keyframes orbFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-30px) scale(1.05); }
+}
+.orb3 { transform: translateX(-50%) translateY(0); }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,196,167,.08);
+  border: 1px solid rgba(0,196,167,.25);
+  border-radius: 30px; padding: 8px 22px;
+  font-size: .8rem; color: var(--teal);
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 32px; z-index: 2;
+  animation: fadeUp .8s ease both;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--teal); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,196,167,.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(0,196,167,0); }
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: .95;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  z-index: 2;
+  animation: fadeUp .8s .1s ease both;
+}
+.hero-title .line-teal { color: var(--teal); }
+
+.hero-ar {
+  font-family: 'Cairo', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 700;
+  color: rgba(255,255,255,.3);
+  margin-top: 12px; z-index: 2;
+  animation: fadeUp .8s .2s ease both;
+}
+body.light .hero-ar { color: rgba(7,18,32,.2); }
+
+.hero-desc {
+  max-width: 620px;
+  margin: 28px auto 0;
+  font-size: 1.05rem; font-weight: 300;
+  color: var(--muted); line-height: 1.8;
+  z-index: 2;
+  animation: fadeUp .8s .3s ease both;
+}
+
+.hero-btns {
+  display: flex; gap: 15px; justify-content: center;
+  margin-top: 40px; flex-wrap: wrap; z-index: 2;
+  animation: fadeUp .8s .4s ease both;
+}
+
+.btn {
+  padding: 14px 34px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: .3s;
+  font-weight: 700;
+  font-size: .9rem;
+  letter-spacing: .03em;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--teal);
+  color: #04111f;
+  border: none;
+  position: relative; overflow: hidden;
+}
+.btn-primary::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,.15);
+  transform: translateX(-100%); transition: transform .3s;
+}
+.btn-primary:hover::after { transform: translateX(0); }
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(0,196,167,.4); }
+
+.btn-outline {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: transparent;
+}
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-3px); }
+
+.hero-stats {
+  display: flex; gap: 60px; justify-content: center;
+  margin-top: 80px; z-index: 2;
+  animation: fadeUp .8s .5s ease both;
+}
+.stat { text-align: center; }
+.stat h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.5rem; font-weight: 800;
+  color: var(--teal); line-height: 1;
+}
+.stat p { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════
+   SECTION BASE
+═══════════════════════════════════════ */
+section { padding: 100px 60px; position: relative; z-index: 2; }
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -.03em;
+  margin-bottom: 12px;
+}
+.section-title-ar {
+  font-family: 'Cairo', sans-serif;
+  font-size: clamp(.9rem, 1.5vw, 1.1rem);
+  color: var(--muted); font-weight: 400;
+  margin-top: 6px;
+}
+.divider {
+  width: 56px; height: 3px;
+  background: var(--teal);
+  margin: 22px 0 50px;
+}
+.section-desc { color: var(--muted); line-height: 1.7; }
+
+/* ═══════════════════════════════════════
+   FEATURES
+═══════════════════════════════════════ */
+#features { background: var(--bg); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.feature {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 28px;
+  position: relative; overflow: hidden;
+  transition: all .35s;
+}
+.feature::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: var(--teal);
+  transform: scaleX(0);
+  transition: transform .4s ease;
+  transform-origin: left;
+}
+.feature:hover { transform: translateY(-6px); background: var(--surface2); }
+.feature:hover::before { transform: scaleX(1); }
+
+.feature i {
+  font-size: 2rem;
+  color: var(--teal);
+  margin-bottom: 20px;
+  display: block;
+}
+.feature h3 { margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1rem; }
+.feature p { color: var(--muted); line-height: 1.7; font-size: .88rem; }
+.feature .ar {
+  font-family: 'Cairo', sans-serif;
+  font-size: .8rem; color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════
+   PLATFORMS
+═══════════════════════════════════════ */
+#platforms { background: var(--bg2); text-align: center; }
+.platforms-header { max-width: 600px; margin: 0 auto 60px; }
+
+.platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px; max-width: 1100px; margin: 0 auto;
+}
+.platform-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 48px 36px;
+  position: relative; overflow: hidden;
+  transition: all .3s; cursor: default;
+}
+.platform-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: var(--teal);
+  transform: scaleX(0);
+  transition: transform .4s ease;
+  transform-origin: left;
+}
+.platform-card:hover { background: var(--surface2); transform: translateY(-4px); }
+.platform-card:hover::before { transform: scaleX(1); }
+.platform-card.web::before  { background: var(--teal); }
+.platform-card.mobile::before { background: var(--blue); }
+.platform-card.desktop::before { background: var(--gold); }
+
+.platform-icon { font-size: 3rem; margin-bottom: 20px; display: block; }
+.platform-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem; font-weight: 700; margin-bottom: 6px;
+}
+.platform-card .ar {
+  font-family: 'Cairo', sans-serif;
+  font-size: .85rem; color: var(--muted); margin-bottom: 20px;
+}
+.platform-card p { font-size: .85rem; color: var(--muted); line-height: 1.7; }
+.platform-tech {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 20px; justify-content: center;
+}
+.tech-pill {
+  font-size: .72rem; padding: 3px 10px;
+  border-radius: 2px; border: 1px solid var(--border);
+  color: var(--muted); background: rgba(255,255,255,.03);
+}
+
+/* ═══════════════════════════════════════
+   TEAM
+═══════════════════════════════════════ */
+#team { background: var(--bg2); }
+.team-header { max-width: 500px; margin-bottom: 60px; }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.member-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 36px 22px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  transition: all .35s;
+}
+.member-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,196,167,.05) 0%, transparent 60%);
+  opacity: 0; transition: opacity .3s;
+  pointer-events: none;
+}
+.member-card:hover { transform: translateY(-8px); background: var(--surface2); border-color: rgba(0,196,167,.4); }
+.member-card:hover::after { opacity: 1; }
+
+.member-num {
+  position: absolute; top: 12px; right: 14px;
+  font-size: .7rem; color: var(--muted);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+}
+
+.member-avatar {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  overflow: hidden;
+  border: 3px solid rgba(0,196,167,.3);
+  position: relative;
+  transition: border-color .3s;
+}
+.member-card:hover .member-avatar { border-color: var(--teal); }
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Fallback initials avatar */
+.member-avatar-init {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem; font-weight: 800;
+  position: relative;
+  border: 3px solid rgba(0,196,167,.3);
+  transition: border-color .3s;
+}
+.member-card:hover .member-avatar-init { border-color: var(--teal); }
+.av-1 { background: rgba(0,196,167,.12);   color: var(--teal); }
+.av-2 { background: rgba(26,111,255,.12);  color: #5b9bff; }
+.av-3 { background: rgba(245,200,66,.12);  color: var(--gold); }
+.av-4 { background: rgba(255,99,132,.12);  color: #ff6384; }
+.av-5 { background: rgba(153,102,255,.12); color: #9966ff; }
+
+.member-name {
+  font-family: 'Syne', sans-serif;
+  font-size: .95rem; font-weight: 700;
+  line-height: 1.3; margin-bottom: 8px;
+}
+.member-id {
+  color: var(--teal); font-size: .82rem;
+  font-family: 'DM Sans', monospace;
+  margin-bottom: 10px; letter-spacing: .05em;
+}
+.member-track {
+  color: var(--muted); font-size: .8rem;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.member-track::before {
+  content: ''; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--teal);
+}
+
+.member-socials {
+  display: flex; justify-content: center; gap: 10px; margin-top: 20px;
+}
+.member-socials a {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: .3s; font-size: .85rem;
+}
+.member-socials a:hover {
+  background: var(--teal);
+  color: #04111f;
+  transform: translateY(-3px);
+  border-color: var(--teal);
+}
+
+/* ═══════════════════════════════════════
+   TECH STACK
+═══════════════════════════════════════ */
+#tech { background: var(--bg); text-align: center; }
+.tech-header { max-width: 500px; margin: 0 auto 60px; }
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; max-width: 900px; margin: 0 auto;
+}
+.tech-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 28px 20px;
+  transition: all .3s;
+}
+.tech-card:hover {
+  border-color: rgba(0,196,167,.4);
+  box-shadow: var(--glow);
+  transform: translateY(-4px);
+}
+.tech-emoji { font-size: 2rem; margin-bottom: 10px; display: block; }
+.tech-name { font-size: .85rem; font-weight: 600; }
+.tech-desc { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+
+/* ═══════════════════════════════════════
+   ABOUT / ROLES
+═══════════════════════════════════════ */
+#about { background: var(--bg2); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: start;
+  max-width: 1100px; margin: 0 auto;
+}
+.role-cards { display: flex; flex-direction: column; gap: 16px; }
+.role-card {
+  display: flex; gap: 16px; align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px 24px; border-radius: 6px;
+  transition: all .3s;
+}
+.role-card:hover { border-color: var(--teal); transform: translateX(6px); }
+.role-icon { font-size: 1.6rem; flex-shrink: 0; }
+.role-info h4 { font-size: .9rem; font-weight: 600; }
+.role-info p  { font-size: .8rem; color: var(--muted); margin-top: 3px; }
+
+.about-text p {
+  font-size: 1rem; color: var(--muted);
+  line-height: 1.8; margin-bottom: 20px;
+}
+.highlight {
+  background: rgba(0,196,167,.06);
+  border-left: 3px solid var(--teal);
+  padding: 20px 24px; border-radius: 0 6px 6px 0;
+  font-size: .9rem; color: var(--text); line-height: 1.7;
+}
+.highlight .ar {
+  font-family: 'Cairo', sans-serif;
+  color: var(--muted); margin-top: 8px; font-size: .85rem;
+}
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 60px 60px 40px;
+  z-index: 2; position: relative;
+}
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 48px; flex-wrap: wrap; gap: 32px;
+}
+.footer-brand .logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem; font-weight: 800; color: var(--text);
+}
+.footer-brand .logo-text span { color: var(--teal); }
+.footer-brand p {
+  font-size: .85rem; color: var(--muted);
+  margin-top: 10px; max-width: 280px; line-height: 1.6;
+}
+.footer-brand .ar-text {
+  font-family: 'Cairo', sans-serif;
+  color: rgba(255,255,255,.2); font-size: .8rem; margin-top: 6px;
+}
+body.light .footer-brand .ar-text { color: rgba(7,18,32,.15); }
+
+.footer-links h5 {
+  font-size: .75rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px;
+}
+.footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-links a {
+  font-size: .85rem; color: var(--muted);
+  text-decoration: none; transition: color .2s;
+}
+.footer-links a:hover { color: var(--teal); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  font-size: .8rem; color: var(--muted);
+}
+.footer-bottom span { color: var(--teal); }
+
+/* ═══════════════════════════════════════
+   LANGUAGE CONTENT
+═══════════════════════════════════════ */
+[lang-content] { display: none; }
+[lang-content].active { display: inline; }
+[lang-content="ar"] { font-family: 'Cairo', sans-serif; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .team-grid        { grid-template-columns: repeat(3, 1fr); }
+  .features-grid    { grid-template-columns: repeat(2, 1fr); }
+  .platforms-grid   { grid-template-columns: 1fr 1fr; }
+  .tech-grid        { grid-template-columns: repeat(2, 1fr); }
+  .about-grid       { grid-template-columns: 1fr; gap: 40px; }
+}
+
+@media (max-width: 700px) {
+  nav { padding: 18px 20px; }
+  .nav-links { display: none; }
+  section { padding: 80px 20px; }
+  .team-grid, .features-grid, .platforms-grid, .tech-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  footer { padding: 40px 20px 24px; }
+  .footer-top { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- CURSORS -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Care<span>Bridge</span></a>
+
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#platforms">Platforms</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="lang-toggle" id="langToggle" title="Toggle Language">
+      <i class="fa-solid fa-language"></i>
+    </button>
+    <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="grid-lines"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="hero-badge">
+    <span lang-content="en" class="active">Software Engineering Graduation Project</span>
+    <span lang-content="ar">مشروع تخرج هندسة البرمجيات</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="line-teal">Care</span>Bridge
+  </h1>
+
+  <div class="hero-ar">
+    <span lang-content="en" class="active">جسر الرعاية</span>
+    <span lang-content="ar">Care Bridge</span>
+  </div>
+
+  <p class="hero-desc">
+    <span lang-content="en" class="active">
+      Smart Rehabilitation Center Management System across Web, Mobile and Desktop Platforms.
+    </span>
+    <span lang-content="ar">
+      نظام ذكي لإدارة مراكز التأهيل عبر الويب والموبايل وسطح المكتب
+    </span>
+  </p>
+
+  <div class="hero-btns">
+    <a href="#team" class="btn btn-primary">
+      <span lang-content="en" class="active">Meet The Team</span>
+      <span lang-content="ar">تعرف على الفريق</span>
+    </a>
+    <a href="#features" class="btn btn-outline">
+      <span lang-content="en" class="active">Explore Features</span>
+      <span lang-content="ar">استكشف المميزات</span>
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <h2>3</h2>
+      <p><span lang-content="en" class="active">Platforms</span><span lang-content="ar">منصة</span></p>
+    </div>
+    <div class="stat">
+      <h2>5</h2>
+      <p><span lang-content="en" class="active">Engineers</span><span lang-content="ar">مهندس</span></p>
+    </div>
+    <div class="stat">
+      <h2>1</h2>
+      <p><span lang-content="en" class="active">Vision</span><span lang-content="ar">رؤية</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <h2 class="section-title">
+    <span lang-content="en" class="active">System Features</span>
+    <span lang-content="ar">مميزات النظام</span>
+  </h2>
+  <div class="section-title-ar">
+    <span lang-content="en" class="active">Core capabilities of the CareBridge platform</span>
+    <span lang-content="ar">القدرات الأساسية لمنصة كير بريدج</span>
+  </div>
+  <div class="divider"></div>
+
+  <div class="features-grid">
+    <div class="feature">
+      <i class="fa-solid fa-user-injured"></i>
+      <h3>
+        <span lang-content="en" class="active">Patient Management</span>
+        <span lang-content="ar">إدارة المرضى</span>
+      </h3>
+      <p>Smart patient profiles, rehabilitation history and full case tracking across sessions.</p>
+    </div>
+    <div class="feature">
+      <i class="fa-solid fa-calendar-check"></i>
+      <h3>
+        <span lang-content="en" class="active">Session Scheduling</span>
+        <span lang-content="ar">جدولة الجلسات</span>
+      </h3>
+      <p>Intelligent therapy scheduling, conflict detection, and automated reminders.</p>
+    </div>
+    <div class="feature">
+      <i class="fa-solid fa-chart-line"></i>
+      <h3>
+        <span lang-content="en" class="active">Progress Reports</span>
+        <span lang-content="ar">تقارير التقدم</span>
+      </h3>
+      <p>Visual analytics dashboards, milestones tracking, and detailed evaluation reports.</p>
+    </div>
+    <div class="feature">
+      <i class="fa-solid fa-comments"></i>
+      <h3>
+        <span lang-content="en" class="active">Parent Communication</span>
+        <span lang-content="ar">تواصل أولياء الأمور</span>
+      </h3>
+      <p>Secure real-time messaging channel between therapists and patient families.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <div class="platforms-header">
+    <h2 class="section-title">
+      <span lang-content="en" class="active">Three Platforms</span>
+      <span lang-content="ar">ثلاث منصات</span>
+    </h2>
+    <div class="section-title-ar">
+      <span lang-content="en" class="active">One unified system — Web, Mobile & Desktop</span>
+      <span lang-content="ar">نظام موحد — ويب، موبايل وسطح المكتب</span>
+    </div>
+    <div class="divider" style="margin: 22px auto 0;"></div>
+  </div>
+
+  <div class="platforms-grid">
+    <div class="platform-card web">
+      <span class="platform-icon">🌐</span>
+      <h3><span lang-content="en" class="active">Web Platform</span><span lang-content="ar">منصة الويب</span></h3>
+      <p class="ar">للإدارة والمتخصصين</p>
+      <p>Full admin panel for center managers, therapists dashboards, reporting, and billing.</p>
+      <div class="platform-tech">
+        <span class="tech-pill">React</span>
+        <span class="tech-pill">Node.js</span>
+        <span class="tech-pill">REST API</span>
+      </div>
+    </div>
+    <div class="platform-card mobile">
+      <span class="platform-icon">📱</span>
+      <h3><span lang-content="en" class="active">Mobile App</span><span lang-content="ar">تطبيق الجوال</span></h3>
+      <p class="ar">لأولياء الأمور والمرضى</p>
+      <p>Patient & family app for session updates, progress monitoring, and communication.</p>
+      <div class="platform-tech">
+        <span class="tech-pill">Flutter</span>
+        <span class="tech-pill">Dart</span>
+        <span class="tech-pill">Firebase</span>
+      </div>
+    </div>
+    <div class="platform-card desktop">
+      <span class="platform-icon">🖥️</span>
+      <h3><span lang-content="en" class="active">Desktop App</span><span lang-content="ar">تطبيق سطح المكتب</span></h3>
+      <p class="ar">للعمل الداخلي</p>
+      <p>Offline-capable desktop client for clinics with advanced data management tools.</p>
+      <div class="platform-tech">
+        <span class="tech-pill">Electron</span>
+        <span class="tech-pill">SQLite</span>
+        <span class="tech-pill">C++</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="team-header">
+    <h2 class="section-title">
+      <span lang-content="en" class="active">Meet Our Team</span>
+      <span lang-content="ar">تعرف على فريقنا</span>
+    </h2>
+    <div class="section-title-ar">
+      <span lang-content="en" class="active">Five engineers — one shared vision</span>
+      <span lang-content="ar">خمسة مهندسين — رؤية مشتركة واحدة</span>
+    </div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="team-grid">
+
+    <!-- MEMBER 1 -->
+    <div class="member-card">
+      <span class="member-num">01</span>
+      <div class="member-avatar">
+        <img src="photo/fa.jpeg" alt="Fatma Mohamed Hassan">
+      </div>
+      <div class="member-name">Fatma Mohamed Hassan</div>
+      <div class="member-id">ID : 2320437</div>
+      <div class="member-track">Software Engineering</div>
+      <div class="member-socials">
+        <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/14Vt35WNzyM/" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/+20 12 85595271" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- MEMBER 2 -->
+    <div class="member-card">
+      <span class="member-num">02</span>
+      <div class="member-avatar">
+        <img src="https://i.pravatar.cc/300?img=2" alt="Bassant Magdy Mourkos">
+      </div>
+      <div class="member-name">Bassant Magdy Mourkos</div>
+      <div class="member-id">ID : 2320162</div>
+      <div class="member-track">Software Engineering</div>
+      <div class="member-socials">
+        <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/201000000000" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- MEMBER 3 -->
+    <div class="member-card">
+      <span class="member-num">03</span>
+      <div class="member-avatar">
+        <img src="photo/GA.jpeg" alt="Gasser Mohamed Hussien">
+      </div>
+      <div class="member-name">Gasser Mohamed Hussien</div>
+      <div class="member-id">ID : 2320177</div>
+      <div class="member-track">Software Engineering</div>
+      <div class="member-socials">
+        <a href="https://www.instagram.com/gaser_mohamed_007?igsh=MTZ3ZDhieWU1amJ1ZQ==" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/18x7unPGwB/" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/+20 12 04191813" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- MEMBER 4 -->
+    <div class="member-card">
+      <span class="member-num">04</span>
+      <div class="member-avatar">
+        <img src="photo/MA.jpeg" alt="Mina Reda Gerges">
+      </div>
+      <div class="member-name">Mina Reda Gerges</div>
+      <div class="member-id">ID : 2320663</div>
+      <div class="member-track">Software Engineering</div>
+      <div class="member-socials">
+        <a href="https://www.instagram.com/mina__rede?igsh=NWJnYjdxMGM2N2Fi" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/1Djvagef6L/" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/+20 1551120115" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- MEMBER 5 -->
+    <div class="member-card">
+      <span class="member-num">05</span>
+      <div class="member-avatar">
+        <img src="photo/JO.jpeg" alt="John Safwat Fikry">
+      </div>
+      <div class="member-name">John Safwat Fikry</div>
+      <div class="member-id">ID : 2320917</div>
+      <div class="member-track">Software Engineering</div>
+      <div class="member-socials">
+        <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.facebook.com/john.saphout?locale=ar_AR" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/+20 10 70208316" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="tech-header">
+    <h2 class="section-title">
+      <span lang-content="en" class="active">Tech Stack</span>
+      <span lang-content="ar">التقنيات المستخدمة</span>
+    </h2>
+    <div class="section-title-ar">
+      <span lang-content="en" class="active">Built with modern, reliable technologies</span>
+      <span lang-content="ar">مبني بتقنيات حديثة وموثوقة</span>
+    </div>
+    <div class="divider" style="margin: 22px auto 0;"></div>
+  </div>
+
+  <div class="tech-grid">
+    <div class="tech-card">
+      <span class="tech-emoji">⚛️</span>
+      <div class="tech-name">React</div>
+      <div class="tech-desc">Web Frontend</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">🐦</span>
+      <div class="tech-name">Flutter</div>
+      <div class="tech-desc">Mobile App</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">🟢</span>
+      <div class="tech-name">Node.js</div>
+      <div class="tech-desc">Backend API</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">🗄️</span>
+      <div class="tech-name">MongoDB</div>
+      <div class="tech-desc">Database</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">🔥</span>
+      <div class="tech-name">Firebase</div>
+      <div class="tech-desc">Notifications</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">🖥️</span>
+      <div class="tech-name">Electron</div>
+      <div class="tech-desc">Desktop App</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">🔒</span>
+      <div class="tech-name">JWT Auth</div>
+      <div class="tech-desc">Security</div>
+    </div>
+    <div class="tech-card">
+      <span class="tech-emoji">☁️</span>
+      <div class="tech-name">Cloud</div>
+      <div class="tech-desc">Deployment</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / ROLES -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title">
+        <span lang-content="en" class="active">About The Project</span>
+        <span lang-content="ar">عن المشروع</span>
+      </h2>
+      <div class="section-title-ar">
+        <span lang-content="en" class="active">A graduation project with real-world impact</span>
+        <span lang-content="ar">مشروع تخرج بأثر حقيقي</span>
+      </div>
+      <div class="divider"></div>
+      <div class="about-text">
+        <p>CareBridge is a comprehensive rehabilitation center management system designed to bridge the gap between healthcare providers and patients' families through smart digital solutions.</p>
+        <p>The system unifies patient management, session scheduling, progress tracking, and family communication into one cohesive platform across web, mobile, and desktop environments.</p>
+        <div class="highlight">
+          "Empowering rehabilitation centers with technology to deliver better patient outcomes."
+          <div class="ar">تمكين مراكز التأهيل بالتكنولوجيا لتحسين نتائج المرضى</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role-cards">
+      <div class="role-card">
+        <span class="role-icon">🎨</span>
+        <div class="role-info">
+          <h4>UI/UX Design</h4>
+          <p>Interface design, prototyping & user experience flows</p>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">💻</span>
+        <div class="role-info">
+          <h4>Frontend Development</h4>
+          <p>React web app & Flutter mobile application</p>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">⚙️</span>
+        <div class="role-info">
+          <h4>Backend Engineering</h4>
+          <p>REST API, authentication & database architecture</p>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">🖥️</span>
+        <div class="role-info">
+          <h4>Desktop Development</h4>
+          <p>Electron-based offline-capable desktop client</p>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">🧪</span>
+        <div class="role-info">
+          <h4>Testing & QA</h4>
+          <p>Unit testing, integration tests & quality assurance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo-text">Care<span>Bridge</span></div>
+      <p>Smart Rehabilitation Center Management System — Software Engineering Graduation Project 2026.</p>
+      <div class="ar-text">نظام ذكي لإدارة مراكز التأهيل — مشروع تخرج ٢٠٢٦</div>
+    </div>
+
+    <div class="footer-links">
+      <h5>Navigation</h5>
+      <ul>
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#platforms">Platforms</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-links">
+      <h5>Team</h5>
+      <ul>
+        <li><a href="#team">Fatma Mohamed Hassan</a></li>
+        <li><a href="#team">Bassant Magdy Mourkos</a></li>
+        <li><a href="#team">Gasser Mohamed Hussien</a></li>
+        <li><a href="#team">Mina Reda Gerges</a></li>
+        <li><a href="#team">John Safwat Fikry</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div>© 2026 <span>CareBridge</span> Team — Software Engineering</div>
+    <div>Built with ❤️ — Graduation Project 2026</div>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════ */
+const cursor     = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+
+let mouseX = 0, mouseY = 0;
+let ringX  = 0, ringY  = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top  = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  cursorRing.style.left = ringX + 'px';
+  cursorRing.style.top  = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+});
+
+/* Hide cursor on mobile */
+if ('ontouchstart' in window) {
+  cursor.style.display = 'none';
+  cursorRing.style.display = 'none';
+  document.body.style.cursor = 'auto';
+}
+
+/* ═══════════════════════════════════════
+   LANGUAGE TOGGLE
+═══════════════════════════════════════ */
+const langBtn = document.getElementById('langToggle');
+let currentLang = 'en';
+
+langBtn.addEventListener('click', () => {
+  currentLang = currentLang === 'en' ? 'ar' : 'en';
+
+  document.querySelectorAll('[lang-content]').forEach(el => {
+    el.classList.remove('active');
+    if (el.getAttribute('lang-content') === currentLang) {
+      el.classList.add('active');
+    }
+  });
+
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir  = currentLang === 'ar' ? 'rtl' : 'ltr';
+});
+
+/* ═══════════════════════════════════════
+   DARK / LIGHT THEME TOGGLE
+═══════════════════════════════════════ */
+const themeBtn = document.getElementById('themeToggle');
+let isDark = true;
+
+themeBtn.addEventListener('click', () => {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  themeBtn.innerHTML = isDark
+    ? '<i class="fa-solid fa-moon"></i>'
+    : '<i class="fa-solid fa-sun"></i>';
+});
+
+/* ═══════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════ */
+const revealEls = document.querySelectorAll(
+  '.member-card, .feature, .platform-card, .tech-card, .role-card'
+);
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }, i * 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+revealEls.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity .5s ease, transform .5s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
